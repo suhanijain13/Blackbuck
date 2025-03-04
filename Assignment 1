@@ -1,0 +1,70 @@
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load the dataset
+titanic_data = pd.read_csv('C:/Users/adith/Downloads/train.csv')  # Use forward slashes or double backslashes
+
+# Display the first few rows of the dataset
+print(titanic_data.head())
+
+# Check for missing values
+print("Missing values:\n", titanic_data.isnull().sum())
+
+# Get basic statistics
+print(titanic_data.describe(include='all'))
+# Create a pivot table for survival rates based on gender and class
+survival_rate = titanic_data.pivot_table('Survived', 'Pclass', 'Sex')
+print(survival_rate)
+
+# Visualization
+plt.figure(figsize=(8, 6))
+sns.heatmap(survival_rate, annot=True, cmap='YlGnBu', fmt='.2f')
+plt.title('Survival Rates by Gender and Class')
+plt.ylabel('Passenger Class')
+plt.xlabel('Gender')
+plt.show()
+
+# Create a new column for family size
+titanic_data['FamilySize'] = titanic_data['SibSp'] + titanic_data['Parch'] + 1
+
+# Analyze survival rates based on family size
+family_survival_rate = titanic_data.groupby('FamilySize')['Survived'].mean()
+print(family_survival_rate)
+
+# Visualization
+plt.figure(figsize=(10, 6))
+family_survival_rate.plot(kind='bar', color='skyblue')
+plt.title('Survival Rates by Family Size')
+plt.xlabel('Family Size')
+plt.ylabel('Survival Rate')
+plt.xticks(rotation=0)
+plt.show()
+
+# Analyze survival rates based on embarkation port
+embarkation_survival_rate = titanic_data.groupby('Embarked')['Survived'].mean()
+print(embarkation_survival_rate)
+
+# Visualization
+plt.figure(figsize=(8, 6))
+embarkation_survival_rate.plot(kind='bar', color='lightgreen')
+plt.title('Survival Rates by Embarkation Port')
+plt.xlabel('Embarkation Port')
+plt.ylabel('Survival Rate')
+plt.xticks(rotation=0)
+plt.show()
+# Analyze survival rates based on age
+plt.figure(figsize=(10, 6))
+sns.boxplot(x='Survived', y='Age', data=titanic_data)
+plt.title('Age Distribution by Survival')
+plt.xlabel('Survived')
+plt.ylabel('Age')
+plt.show()
+
+# Analyze survival rates based on fare
+plt.figure(figsize=(10, 6))
+sns.histplot(data=titanic_data, x='Fare', hue='Survived', multiple='stack', bins=30)
+plt.title('Fare Distribution by Survival')
+plt.xlabel('Fare')
+plt.ylabel('Count')
+plt.show()
